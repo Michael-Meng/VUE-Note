@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            background-color: #ecf0f3;
+        }
+        li{
+            list-style: none;
+        }
+        button{
+            float: right;
+            height: 20px;
+            background-color: red;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            opacity: 0.5;
+            height: 20px;
+            width: 50px;
+        }
+        button:hover{
+            opacity: 1;
+        }
+        #note{
+            width: 600px;
+            height: 500px;
+            margin: 100px auto;
+            text-align: center;
+            box-shadow: inset 2px 2px 5px #BABECC, inset -5px -5px 10px #FFF;
+        }
+        .header h1{
+            text-transform: uppercase;
+            color: #646464;
+            padding: 50px 0;
+        }
+        .header input{
+            width: 300px;
+            height: 30px;
+            border: solid 1px #aaa;
+            border-radius: 4px;
+        }
+        .main{
+            margin: 20px auto;
+            width: 300px;
+        }
+        li.note{
+            text-align: left;
+            padding: 5px 0px;
+        }
+
+        .footer{
+            width: 300px;
+            margin: 0 auto;
+        }
+        .footer .note-count{
+            float: left;
+        }
+        .footer .note-count strong{
+            color: red;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <section id="note">
+        <header class="header">
+            <h1>Note</h1>
+            <input v-model="inputValue" @keyup.enter="add" autofocus="autofocus" autocomplete="off" placeholder="请输入..." class="new-note">
+        </header>
+        <section class="main">
+            <ul class="note-list">
+                <li class="note" v-for="(item,index) in list">
+                    <div class="view">
+                        <span class="index">{{ index+1 }}. </span>
+                        <label>{{ item }}</label>
+                        <button class="destroy" @click="remove(index)">x</button>
+                    </div>
+                </li>
+            </ul>
+        </section>
+        <footer class="footer">
+            <span class="note-count" v-if="list.length!=0">
+                <strong>{{ list.length }}</strong>
+                items left
+            </span>
+            <button class="clear-btn" @click="clear" v-show="list.length!=0">
+                Clear
+            </button>
+        </footer>
+
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: "#note",
+            data: {
+               list: [],
+               inputValue: ""
+            },
+            created() {
+                this.list = JSON.parse(localStorage.getItem('list')) || []
+            },
+            methods:{
+               add: function () {
+                   if(this.inputValue.trim()!=""){
+                        this.list.push(this.inputValue);
+                        this.inputValue=""
+                    }else{
+                        alert("输入内容不得为空！");
+                        this.inputValue=""
+                        return
+                    }
+               },
+               remove: function (index) {
+                   this.list.splice(index, 1)
+               },
+               clear: function () {
+                   this.list=[]
+               }
+            }  ,
+            watch: {
+                list: {
+                    deep: true,
+                    handler: function (to) {
+                        localStorage.setItem('list', JSON.stringify(to));
+                    }
+                }
+            }        
+        })
+    </script>
+</body>
+
+</html>
